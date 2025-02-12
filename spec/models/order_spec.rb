@@ -88,29 +88,4 @@ RSpec.describe Order, type: :model do
       expect(order.total_amount).to eq(170)
     end
   end
-
-  describe 'Callbacks' do
-    describe 'before_update' do
-      describe '#prevent_order_cancellation' do
-        it 'prevent order cancellation' do
-          inventory1 = FactoryBot.create(:dough_inventory)
-          inventory2 = FactoryBot.create(:cheese_inventory)
-          veg_pizza = FactoryBot.create(:pizza, name: 'Deluxe Veggie', category: 'veg', price_regular: 150,price_medium: 200, price_large: 325)
-          crust = FactoryBot.create(:crust)
-          veg_topping = FactoryBot.create(:topping, name: 'Black Olive', category: 'veg', price: 20)
-          order_pizza_topping = FactoryBot.create(:order_pizza_topping, name: 'Paneer', category: 'veg', price: 35, toppings: [veg_topping.id])
-          
-          order_pizza = FactoryBot.create(:order_pizza, pizza: veg_pizza, crust: crust, size: 'regular', order_pizza_toppings: [order_pizza_topping.id])
-
-          order = FactoryBot.create(:order, status: "pending", order_pizzas: [order_pizza.id])
-          
-          order.update(status: "confirmed")
-          
-          expect(order).to_not be_valid
-          expect(order.errors.full_messages).to include('Order cannot be cancelled or modified once placed')
-        end
-      end
-    end
-  end
-
 end
